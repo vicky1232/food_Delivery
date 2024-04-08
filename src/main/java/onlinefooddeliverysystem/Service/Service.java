@@ -41,5 +41,7 @@ public interface Service {
 
     boolean deleteFoodById(Long foodId);
 
+    CommonResponse AddCategory(Category category);
+
     // CommonResponse deleteCategoryById(Long categoryId);
 }
