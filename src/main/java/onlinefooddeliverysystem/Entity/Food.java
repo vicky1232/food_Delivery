@@ -31,6 +31,9 @@ public class Food {
 
     @Column(name = "Food_Discount")
     private Double foodDiscount;
+
+    @Column(name = "Category_Id")
+    private Long categoryId;
 //    @JsonIgnore
 //    @ManyToOne
 //    @JoinColumn(name = "Category_Id")

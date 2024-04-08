@@ -3,6 +3,8 @@ package onlinefooddeliverysystem.Controller;
 import onlinefooddeliverysystem.Entity.*;
 import onlinefooddeliverysystem.Model.*;
 import onlinefooddeliverysystem.Service.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +18,24 @@ import java.util.List;
 public class Controller {
     @Autowired
     private Service service;
-
+    Logger logger = LoggerFactory.getLogger(Controller.class);
     @PostMapping("/adminRegister")
     public CommonResponse admin(@RequestBody Admin adminmodel) {
         CommonResponse commonResponse = new CommonResponse();
         String email = adminmodel.getEmailId();
         if (email != null && email.contains("@gmail")) {
+
             commonResponse = service.saveadmin(adminmodel);
 
         } else {
             commonResponse.setCode("1111");
             commonResponse.setMsg("invalid email");
         }
+        // Logging user request information
+        logger.info("Received request to register admin with email: {}", email);
+
+        // Logging response information
+        logger.info("Response code: {}, Message: {}", commonResponse.getCode(), commonResponse.getMsg());
         return commonResponse;
     }
 
@@ -45,18 +53,29 @@ public class Controller {
 
                 if (admin != null) {
                     adminDetail = service.passwordMatch(adminPassword, admin);
+                    // Logging successful login attempt
+                    logger.info("Admin with email {} logged in successfully.", adminEmail);
 
                 } else {
+                    // Logging invalid email
+                    logger.info("Admin with email {} does not exist.", adminEmail);
+
                     System.out.println("Invalid email");
                     adminDetail.setCode("1111");
                     adminDetail.setMsg("Admin does not exit");
                 }
             } else {
+                // Logging invalid email or password
+                logger.info("Invalid email or password.");
+
                 System.out.println("Invalid email");
                 adminDetail.setCode("1111");
                 adminDetail.setMsg("Invalid admin email");
             }
         } catch (Exception e) {
+            // Logging any exceptions
+            logger.error("An error occurred during admin login: {}", e.getMessage(), e);
+
             System.out.println(e);
             adminDetail.setCode("1111");
             adminDetail.setMsg("Technical issue");
@@ -65,7 +84,7 @@ public class Controller {
     }
 
     @GetMapping("/dashboardTotalUser")
-    public List userDetail() {
+    public List<Integer> userDetail() {
         return service.getTotalUser();
     }
 
@@ -101,6 +120,16 @@ public class Controller {
         commonResponse = service.readDataFood(file);
         return new ResponseEntity<CommonResponse>(commonResponse, HttpStatus.OK);
     }
+//@PostMapping("/CategoryUpload")
+//public ResponseEntity<CategoryDetails> createCategory(@RequestBody Category category) {
+//    CategoryDetails categoryDetails = service.createCategory(category);
+//
+//    if ("0000".equals(categoryDetails.getCode())) {
+//        return new ResponseEntity<>(categoryDetails, HttpStatus.CREATED);
+//    } else {
+//        return new ResponseEntity<>(categoryDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
+//}
 
    @GetMapping("/ViewCategory")
    public ResponseEntity<CategoryData> ViewCategory(){
@@ -194,6 +223,22 @@ public class Controller {
         return new ResponseEntity<UserData>(userData, HttpStatus.OK);
     }
 
+    @GetMapping("/FoodByCategory")
+public ResponseEntity<FoodCategoriesData> FoodByCategory(){
+        List<FoodsByCategoriesData> foodsByCategoriesData = new ArrayList<>();
+        FoodCategoriesData foodCategoriData = new FoodCategoriesData();
+        foodsByCategoriesData = service.FoodByCategory();
+        if(foodsByCategoriesData.isEmpty()){
+            foodCategoriData.setCode("1111");
+            foodCategoriData.setMsg("Data not found");
+            foodCategoriData.setFoodsByCategoriesData(foodsByCategoriesData);
+        }else {
+            foodCategoriData.setCode("0000");
+            foodCategoriData.setMsg("Data found successfully");
+            foodCategoriData.setFoodsByCategoriesData(foodsByCategoriesData);
+        }
+        return new ResponseEntity<FoodCategoriesData>(foodCategoriData, HttpStatus.OK);
+    }
     @GetMapping("/getFoodByCategories")
     public CategoryIdData getFoodByCategories(@RequestParam Long categoryId) {
         CategoryIdData categoryIdData = new CategoryIdData();

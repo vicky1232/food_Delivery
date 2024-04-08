@@ -2,9 +2,7 @@ package onlinefooddeliverysystem.ServiceImpl;
 
 import onlinefooddeliverysystem.Entity.*;
 import onlinefooddeliverysystem.FileUtilittyValidation;
-import onlinefooddeliverysystem.Model.AdminDetail;
-import onlinefooddeliverysystem.Model.CategoryNewData;
-import onlinefooddeliverysystem.Model.CommonResponse;
+import onlinefooddeliverysystem.Model.*;
 import onlinefooddeliverysystem.Repository.*;
 import onlinefooddeliverysystem.Service.Service;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
@@ -75,8 +73,8 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public List getTotalUser() {
-        List users;
+    public List<Integer> getTotalUser() {
+        List<Integer> users;
         users = userRepository.getUsers();
         return users;
     }
@@ -354,5 +352,32 @@ public boolean deleteCategoryById(Long categoryId) {
             return false;
         }
     }
+
+//    @Override
+//    public CategoryDetails createCategory(Category category) {
+//        CategoryDetails categoryDetails = new CategoryDetails();
+//        try {
+//            Category savedCategory = categoryRepository.save(category);
+//            categoryDetails.setMsg("Category details created successfully");
+//            categoryDetails.setCode("0000");
+//            return categoryDetails;
+//        } catch (Exception e) {
+//            // Log the exception or handle it accordingly
+//            e.printStackTrace();
+//            categoryDetails.setMsg("Failed to create Category details");
+//            categoryDetails.setCode("1111");
+//            return categoryDetails;
+//        }
+//    }
+
+    @Override
+    public List<FoodsByCategoriesData> FoodByCategory() {
+        List<FoodsByCategoriesData> foodsByCategoriesData = new ArrayList<>();
+        foodsByCategoriesData =  categoryRepository.AllFoodByCategory();
+        return foodsByCategoriesData;
+    }
 }
+
+
+
 

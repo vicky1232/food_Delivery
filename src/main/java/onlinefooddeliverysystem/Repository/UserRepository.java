@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select count(ur.firstName) from User ur")
-    List getUsers();
+    List<Integer> getUsers();
 }

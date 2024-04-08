@@ -1,9 +1,7 @@
 package onlinefooddeliverysystem.Service;
 
 import onlinefooddeliverysystem.Entity.*;
-import onlinefooddeliverysystem.Model.AdminDetail;
-import onlinefooddeliverysystem.Model.CategoryNewData;
-import onlinefooddeliverysystem.Model.CommonResponse;
+import onlinefooddeliverysystem.Model.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -15,7 +13,7 @@ public interface Service {
 
     AdminDetail passwordMatch(String adminPassword, Admin admin);
 
-    List getTotalUser();
+    List<Integer> getTotalUser();
 
     List getTotalCategory();
 
@@ -40,6 +38,10 @@ public interface Service {
     List<CategoryNewData> getDataBycategoryId(Long categoryId);
 
     boolean deleteFoodById(Long foodId);
+
+ //   CategoryDetails createCategory(Category category);
+
+    List<FoodsByCategoriesData> FoodByCategory();
 
     // CommonResponse deleteCategoryById(Long categoryId);
 }
