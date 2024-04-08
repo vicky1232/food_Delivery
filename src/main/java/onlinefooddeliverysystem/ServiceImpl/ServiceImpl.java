@@ -376,8 +376,30 @@ public boolean deleteCategoryById(Long categoryId) {
         foodsByCategoriesData =  categoryRepository.AllFoodByCategory();
         return foodsByCategoriesData;
     }
-}
 
+
+
+
+
+
+    @Override
+    public CommonResponse AddCategory(Category category) {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            Category savedCategory = categoryRepository.save(category);
+            commonResponse.setMsg("AddCategory details created successfully");
+            commonResponse.setCode("0000");
+            return commonResponse;
+        } catch (Exception e) {
+            // Log the exception or handle it accordingly
+            e.printStackTrace();
+            commonResponse.setMsg("Failed to create AddCategory details");
+            commonResponse.setCode("1111");
+            return commonResponse;
+        }
+    }
+
+}
 
 
 

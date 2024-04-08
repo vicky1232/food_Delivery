@@ -40,8 +40,8 @@ public interface Service {
     boolean deleteFoodById(Long foodId);
 
  //   CategoryDetails createCategory(Category category);
-
     List<FoodsByCategoriesData> FoodByCategory();
+    CommonResponse AddCategory(Category category);
 
     // CommonResponse deleteCategoryById(Long categoryId);
 }

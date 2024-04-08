@@ -131,6 +131,18 @@ public class Controller {
 //    }
 //}
 
+
+    @PostMapping("/CategoryUpload")
+    public ResponseEntity<CommonResponse> AddCategory(@RequestBody Category category) {
+        CommonResponse commonResponse = service.AddCategory(category);
+
+        if ("0000".equals(commonResponse.getCode())) {
+            return new ResponseEntity<>(commonResponse, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(commonResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
    @GetMapping("/ViewCategory")
    public ResponseEntity<CategoryData> ViewCategory(){
     List<Category> categories = new ArrayList<>();
