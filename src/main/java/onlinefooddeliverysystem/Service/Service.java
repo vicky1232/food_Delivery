@@ -43,5 +43,7 @@ public interface Service {
     List<FoodsByCategoriesData> FoodByCategory();
     CommonResponse AddCategory(Category category);
 
+    DashboardCountDetail getAllDashboardDetail();
+
     // CommonResponse deleteCategoryById(Long categoryId);
 }

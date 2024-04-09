@@ -16,9 +16,12 @@ import java.util.List;
 
 @RestController
 public class Controller {
+
     @Autowired
     private Service service;
     Logger logger = LoggerFactory.getLogger(Controller.class);
+
+
     @PostMapping("/adminRegister")
     public CommonResponse admin(@RequestBody Admin adminmodel) {
         CommonResponse commonResponse = new CommonResponse();
@@ -38,6 +41,7 @@ public class Controller {
         logger.info("Response code: {}, Message: {}", commonResponse.getCode(), commonResponse.getMsg());
         return commonResponse;
     }
+
 
     @PostMapping("/adminlogin")
     public ResponseEntity<AdminDetail> loginAuthentication(@RequestBody Admin adminRequest) {
@@ -83,6 +87,8 @@ public class Controller {
         return new ResponseEntity<AdminDetail>(adminDetail, HttpStatus.OK);
     }
 
+
+
     @GetMapping("/dashboardTotalUser")
     public List<Integer> userDetail() {
         return service.getTotalUser();
@@ -106,6 +112,13 @@ public class Controller {
         return service.getTotalOrder();
     }
 
+    @GetMapping("/dashboardCountDetail")
+    DashboardCountDetail dashboardDetail(){
+        DashboardCountDetail dashboardCountDetail = new DashboardCountDetail();
+        dashboardCountDetail = service.getAllDashboardDetail();
+        return dashboardCountDetail;
+    }
+
 
     @PostMapping("/AddCategory")
     public ResponseEntity<CommonResponse> CategoryFileUpload(@RequestParam("file") MultipartFile file) {
@@ -120,6 +133,7 @@ public class Controller {
         commonResponse = service.readDataFood(file);
         return new ResponseEntity<CommonResponse>(commonResponse, HttpStatus.OK);
     }
+
 //@PostMapping("/CategoryUpload")
 //public ResponseEntity<CategoryDetails> createCategory(@RequestBody Category category) {
 //    CategoryDetails categoryDetails = service.createCategory(category);
@@ -251,6 +265,7 @@ public ResponseEntity<FoodCategoriesData> FoodByCategory(){
         }
         return new ResponseEntity<FoodCategoriesData>(foodCategoriData, HttpStatus.OK);
     }
+
     @GetMapping("/getFoodByCategories")
     public CategoryIdData getFoodByCategories(@RequestParam Long categoryId) {
         CategoryIdData categoryIdData = new CategoryIdData();

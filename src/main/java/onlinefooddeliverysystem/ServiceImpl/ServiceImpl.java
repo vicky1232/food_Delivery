@@ -5,13 +5,19 @@ import onlinefooddeliverysystem.FileUtilittyValidation;
 import onlinefooddeliverysystem.Model.*;
 import onlinefooddeliverysystem.Repository.*;
 import onlinefooddeliverysystem.Service.Service;
+import onlinefooddeliverysystem.Utility.CategoryUtility;
+import onlinefooddeliverysystem.Utility.FoodUtility;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +36,12 @@ public class ServiceImpl implements Service {
     private OrderRepository orderRepository;
     @Autowired
     private FileUtilittyValidation fileUtilittyValidation;
+    @Autowired
+    private CategoryUtility categoryUtility;
+    @Autowired
+    private FoodUtility foodUtility;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -399,6 +411,58 @@ public boolean deleteCategoryById(Long categoryId) {
         }
     }
 
+    @Override
+    public DashboardCountDetail getAllDashboardDetail() {
+        DashboardCountDetail dashboardCountDetail = new DashboardCountDetail();
+        DashboardCountDetail.CategoryCount dashboardCategory = new DashboardCountDetail.CategoryCount();
+        DashboardCountDetail.FoodCount dashboardFood = new DashboardCountDetail.FoodCount();
+
+        try{
+            String categoryQuery = categoryUtility.CountCategoryQuery();
+            String foodQuery = foodUtility.CountFoodQuery();
+            dashboardCategory = jdbcTemplate.queryForObject(categoryQuery, new MyRowMappercategory());
+            dashboardFood =   jdbcTemplate.queryForObject(foodQuery, new MyRowMapperfood());
+            if(dashboardCategory == null && dashboardFood == null){
+                dashboardCountDetail.setMsg("Data not found");
+                dashboardCountDetail.setCode("1111");
+            }else {
+                if(dashboardCategory == null){
+                    dashboardCountDetail.setMsg("Data not found for Category");
+                    dashboardCountDetail.setCode("1111");
+                }else {
+                if(dashboardFood == null){
+                   dashboardCountDetail.setMsg("Data not found for Food");
+                   dashboardCountDetail.setCode("1111");
+            } else
+                  dashboardCountDetail.setMsg("Data found successfully");
+                dashboardCountDetail.setCode("0000");
+                }
+            }
+            dashboardCountDetail.setCategoryCount(dashboardCategory);
+            dashboardCountDetail.setFoodCount(dashboardFood);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return dashboardCountDetail;
+    }
+
+    private class MyRowMappercategory implements RowMapper<DashboardCountDetail.CategoryCount> {
+        @Override
+        public DashboardCountDetail.CategoryCount mapRow(ResultSet rs, int rowNum) throws SQLException {
+            DashboardCountDetail.CategoryCount dashboardCategory = new DashboardCountDetail.CategoryCount();
+            dashboardCategory.setCategoryName(rs.getString("CountCategoryName"));
+            return dashboardCategory;
+        }
+    }
+
+    private class MyRowMapperfood implements RowMapper<DashboardCountDetail.FoodCount>{
+        @Override
+        public DashboardCountDetail.FoodCount mapRow(ResultSet rs, int rowNum) throws SQLException {
+            DashboardCountDetail.FoodCount dashboardFood = new DashboardCountDetail.FoodCount();
+            dashboardFood.setFoodName(rs.getString("CountFoodName"));
+            return dashboardFood;
+        }
+    }
 }
 
 
